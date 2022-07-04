@@ -43,8 +43,9 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": null,  \"content\": \"내용입니다.\"}")
                 )
-                .andExpect(status().isOk())
-                .andExpect(content().string("hello world!"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
                 .andDo(print());
     }
 
