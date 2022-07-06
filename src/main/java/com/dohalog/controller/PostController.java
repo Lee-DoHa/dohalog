@@ -2,6 +2,7 @@ package com.dohalog.controller;
 
 import com.dohalog.domain.Post;
 import com.dohalog.request.PostCreate;
+import com.dohalog.response.PostResponse;
 import com.dohalog.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +35,13 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public Post get(@PathVariable(name = "postId") Long id){
-        Post post = postService.get(id);
-        return post;
+    public PostResponse get(@PathVariable(name = "postId") Long id){
+        // Request 클래스
+        // Response 클래스
+
+        PostResponse response = postService.get(id);
+        // 응답 클래스를 분리
+        return response;
     }
 
 }

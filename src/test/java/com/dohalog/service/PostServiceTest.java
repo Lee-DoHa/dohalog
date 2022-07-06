@@ -3,6 +3,7 @@ package com.dohalog.service;
 import com.dohalog.domain.Post;
 import com.dohalog.repository.PostRepository;
 import com.dohalog.request.PostCreate;
+import com.dohalog.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,13 +59,13 @@ class PostServiceTest {
 
 
         // when
-        Post post = postService.get(requestPost.getId());
+        PostResponse response = postService.get(requestPost.getId());
 
         // then
-        Assertions.assertNotNull(post);
+        Assertions.assertNotNull(response);
         Assertions.assertEquals(1L, postRepository.count());
-        Assertions.assertEquals("foo", post.getTitle());
-        Assertions.assertEquals("bar", post.getContent());
+        Assertions.assertEquals("foo", response.getTitle());
+        Assertions.assertEquals("bar", response.getContent());
     }
 
 
