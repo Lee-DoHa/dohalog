@@ -4,6 +4,7 @@ import com.dohalog.domain.Post;
 import com.dohalog.repository.PostRepository;
 import com.dohalog.request.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -133,11 +134,41 @@ class PostControllerTest {
 
         // expected(when과 then이 섞인거)
         mockMvc.perform(get("/posts/{postId}", post.getId())
-                        .contentType(MediaType.APPLICATION_JSON)                )
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(post.getId()))
                 .andExpect(jsonPath("$.title").value("foo"))
                 .andExpect(jsonPath("$.content").value("bar"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 여러개 조회")
+    void test5() throws Exception {
+        // given
+        Post post1 = Post.builder()
+                .title("1")
+                .content("111")
+                .build();
+        postRepository.save(post1);
+
+        Post post2 = Post.builder()
+                .title("2")
+                .content("222")
+                .build();
+        postRepository.save(post2);
+
+        // expected(when과 then이 섞인거)
+        mockMvc.perform(get("/posts")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Matchers.is(2)))
+                .andExpect(jsonPath("$[0].id").value(post1.getId()))
+                .andExpect(jsonPath("$[0].title").value("1"))
+                .andExpect(jsonPath("$[0].content").value("111"))
+                .andExpect(jsonPath("$[1].id").value(post2.getId()))
+                .andExpect(jsonPath("$[1].title").value("2"))
+                .andExpect(jsonPath("$[1].content").value("222"))
                 .andDo(print());
     }
 

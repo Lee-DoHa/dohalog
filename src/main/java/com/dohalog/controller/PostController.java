@@ -6,14 +6,10 @@ import com.dohalog.response.PostResponse;
 import com.dohalog.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -35,13 +31,13 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public PostResponse get(@PathVariable(name = "postId") Long id){
-        // Request 클래스
-        // Response 클래스
+    public PostResponse get(@PathVariable Long postId){
+        return postService.get(postId);
+    }
 
-        PostResponse response = postService.get(id);
-        // 응답 클래스를 분리
-        return response;
+    @GetMapping("/posts")
+    public List<PostResponse> getList() {
+        return postService.getList();
     }
 
 }
