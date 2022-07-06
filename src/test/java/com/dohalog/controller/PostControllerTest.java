@@ -19,6 +19,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -146,29 +150,23 @@ class PostControllerTest {
     @DisplayName("글 여러개 조회")
     void test5() throws Exception {
         // given
-        Post post1 = Post.builder()
-                .title("1")
-                .content("111")
-                .build();
-        postRepository.save(post1);
-
-        Post post2 = Post.builder()
-                .title("2")
-                .content("222")
-                .build();
-        postRepository.save(post2);
+        List<Post> requestPosts = IntStream.range(1, 31)
+                .mapToObj(i ->
+                        Post.builder()
+                                .title("도하씨 제목 - " + i)
+                                .content("굳잡뿡빵 - " + i)
+                                .build())
+                .collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
 
         // expected(when과 then이 섞인거)
-        mockMvc.perform(get("/posts")
+        mockMvc.perform(get("/posts?page=1&sort=id,desc")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Matchers.is(2)))
-                .andExpect(jsonPath("$[0].id").value(post1.getId()))
-                .andExpect(jsonPath("$[0].title").value("1"))
-                .andExpect(jsonPath("$[0].content").value("111"))
-                .andExpect(jsonPath("$[1].id").value(post2.getId()))
-                .andExpect(jsonPath("$[1].title").value("2"))
-                .andExpect(jsonPath("$[1].content").value("222"))
+                .andExpect(jsonPath("$.length()", Matchers.is(5)))
+                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].title").value("도하씨 제목 - 30"))
+                .andExpect(jsonPath("$[0].content").value("굳잡뿡빵 - 30"))
                 .andDo(print());
     }
 
