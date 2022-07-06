@@ -4,6 +4,7 @@ import com.dohalog.domain.Post;
 import com.dohalog.repository.PostRepository;
 import com.dohalog.request.PostCreate;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,11 @@ class PostServiceTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @BeforeEach
+    void clean(){
+        postRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("글 작성")
@@ -39,4 +45,27 @@ class PostServiceTest {
         Assertions.assertEquals("제목입니다.", post.getTitle());
         Assertions.assertEquals("내용입니다.", post.getContent());
     }
+
+    @Test
+    @DisplayName("글 한개 조회")
+    void test2() {
+        // given
+        Post requestPost = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+        postRepository.save(requestPost);
+
+
+        // when
+        Post post = postService.get(requestPost.getId());
+
+        // then
+        Assertions.assertNotNull(post);
+        Assertions.assertEquals(1L, postRepository.count());
+        Assertions.assertEquals("foo", post.getTitle());
+        Assertions.assertEquals("bar", post.getContent());
+    }
+
+
 }
