@@ -2,6 +2,7 @@ package com.dohalog.controller;
 
 import com.dohalog.domain.Post;
 import com.dohalog.request.PostCreate;
+import com.dohalog.request.PostSearch;
 import com.dohalog.response.PostResponse;
 import com.dohalog.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +34,13 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public PostResponse get(@PathVariable Long postId){
+    public PostResponse get(Long postId){
         return postService.get(postId);
     }
 
     @GetMapping("/posts")
-    public List<PostResponse> getList(Pageable pageable) {
-        return postService.getList(pageable);
+    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
+        return postService.getList(postSearch);
     }
 
 }
