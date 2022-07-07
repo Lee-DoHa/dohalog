@@ -3,7 +3,10 @@ package com.dohalog.service;
 import com.dohalog.domain.Post;
 import com.dohalog.repository.PostRepository;
 import com.dohalog.request.PostCreate;
+import com.dohalog.request.PostEdit;
+import com.dohalog.request.PostSearch;
 import com.dohalog.response.PostResponse;
+import com.mysema.commons.lang.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,26 +79,77 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 1페이지 조회")
+    @DisplayName("글 여러개 조회")
     void test3() {
         // given
-        List<Post> requestPosts = IntStream.range(1, 31)
-                        .mapToObj(i ->
-                            Post.builder()
+        List<Post> requestPosts = IntStream.range(0, 20)
+                        .mapToObj(i -> Post.builder()
                                     .title("도하씨 제목 - " + i)
                                     .content("굳잡뿡빵 - " + i)
                                     .build())
-                                .collect(Collectors.toList());
+                        .collect(Collectors.toList());
         postRepository.saveAll(requestPosts);
 
-        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
+        PostSearch postSearch = PostSearch.builder()
+                .page(1)
+                .build();
+
 
         // when
-        List<PostResponse> posts = postService.getList(pageable);
+        List<PostResponse> posts = postService.getList(postSearch);
 
         // then
-        assertEquals(5L, posts.size());
-        assertEquals("도하씨 제목 - 30", posts.get(0).getTitle());
-        assertEquals("도하씨 제목 - 26", posts.get(4).getTitle());
+        assertEquals(10L, posts.size());
+        assertEquals("도하씨 제목 - 19", posts.get(0).getTitle());
     }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void test4() {
+        // given
+        Post post = Post.builder()
+                .title("도하씨")
+                .content("굳잡뿡빵")
+                .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("도하하하하!")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+        Assertions.assertEquals("도하하하하!", changedPost.getTitle());
+
+    }
+
+    @Test
+    @DisplayName("글 본문 수정")
+    void test5() {
+        // given
+        Post post = Post.builder()
+                .title("도하씨")
+                .content("굳잡뿡빵")
+                .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("도하씨")
+                .content("뿡빵빵")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+        Assertions.assertEquals("뿡빵빵", changedPost.getContent());
+
+    }
+
 }
