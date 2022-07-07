@@ -23,8 +23,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.RequestEntity.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -188,6 +187,23 @@ class PostControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 삭제")
+    void test7() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("도하씨")
+                .content("굳잡뿡빵")
+                .build();
+        postRepository.save(post);
+
+        // expected(when과 then이 섞인거)
+        mockMvc.perform(delete("/posts/{postId}", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

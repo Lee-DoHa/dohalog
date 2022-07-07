@@ -152,4 +152,22 @@ class PostServiceTest {
 
     }
 
+    @Test
+    @DisplayName("글 삭제")
+    void test6() {
+        // given
+        Post post = Post.builder()
+                .title("도하씨")
+                .content("굳잡뿡빵")
+                .build();
+        postRepository.save(post);
+
+        // when
+        postService.delete(post.getId());
+
+        // then
+        Assertions.assertEquals(0, postRepository.count());
+
+    }
+
 }
