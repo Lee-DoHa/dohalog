@@ -2,6 +2,7 @@ package com.dohalog.controller;
 
 import com.dohalog.domain.Post;
 import com.dohalog.request.PostCreate;
+import com.dohalog.request.PostEdit;
 import com.dohalog.request.PostSearch;
 import com.dohalog.response.PostResponse;
 import com.dohalog.service.PostService;
@@ -41,6 +42,11 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
         return postService.getList(postSearch);
+    }
+
+    @PatchMapping("/posts/{postId}")
+    public void edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
+         postService.edit(postId, request);
     }
 
 }
