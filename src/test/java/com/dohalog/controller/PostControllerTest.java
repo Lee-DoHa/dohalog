@@ -253,8 +253,6 @@ class PostControllerTest {
                 )
                 .andExpect(status().isBadRequest())
                 .andDo(print());
-
     }
-
 }
 
