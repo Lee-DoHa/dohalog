@@ -88,9 +88,6 @@ class PostControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-                .andExpect(jsonPath("$.validation.title").value("타이틀을 입력해주세요."))
                 .andDo(print());
     }
 
@@ -162,7 +159,7 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", Matchers.is(10)))
-                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].id").value(33))
                 .andExpect(jsonPath("$[0].title").value("도하씨 제목 - 30"))
                 .andExpect(jsonPath("$[0].content").value("굳잡뿡빵 - 30"))
                 .andDo(print());
